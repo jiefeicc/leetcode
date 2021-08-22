@@ -21,3 +21,14 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/src/leetcode/editor/cn/doc/all.json
+/.idea/leetcode/editor.xml
+/.idea/leetcode.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/runConfigurations.xml
+/.idea/vcs.xml
+/.idea/.gitignore
+/out/production/leetcode/leetcode/editor/cn/doc/all.json
+/out/production/leetcode/leetcode/editor/cn/doc/translation.json
+/out/
