@@ -32,4 +32,7 @@ hs_err_pid*
 /out/production/leetcode/leetcode/editor/cn/doc/all.json
 /out/production/leetcode/leetcode/editor/cn/doc/translation.json
 /out/
+/leetcode.iml
+/.idea/
+/src/leetcode/editor/cn/doc/translation.json
 /src/rebel.xml
