@@ -87,6 +87,7 @@ class ReverseNodesInKGroup{
         end 往后移动 k 个节点，这 k 个节点单拿出来组成一个链表进行翻转，pre 设置到 end 的位置。
         重复上述操作，直到 end 节点往后移动不到 k 个节点。
          */
+        // ToDo 不满 K 个也要翻转的处理方法
         public ListNode reverseKGroup(ListNode head, int k) {
             ListNode dummy = new ListNode(0);
             dummy.next = head;
@@ -99,23 +100,33 @@ class ReverseNodesInKGroup{
                 if (end == null) {
                     break;
                 }
-                ListNode left = pre.next;
+                // 记录断点并断开链表
                 ListNode right = end.next;
                 end.next = null;
+
                 // 翻转这一段链表
+                ListNode left = pre.next;
                 pre.next = reverse(left);
+
+                // left已经到了右边了，此时连接链表
+                left.next = right;
+
                 // pre 设置到 end 的位置
-                pre = right;
-                end = right;
+                pre = left;
+                end = left;
             }
             return dummy.next;
         }
 
-        // 翻转链表 head
         /*
-            pre = null, cur = head, cur->pre, 往链表后面迭代
+        翻转链表
+        cur = head，pre = null
+        cur->pre，不停的往后迭代。
          */
         private ListNode reverse(ListNode head) {
+            if (head == null || head.next == null) {
+                return head;
+            }
             ListNode pre = null;
             ListNode cur = head;
             ListNode tmp;
