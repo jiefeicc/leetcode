@@ -1,27 +1,27 @@
-//运用你所掌握的数据结构，设计和实现一个 LRU (最近最少使用) 缓存机制 。 
+//运用你所掌握的数据结构，设计和实现一个 LRU (最近最少使用) 缓存机制 。
 //
-// 
-// 
-// 实现 LRUCache 类： 
 //
-// 
-// LRUCache(int capacity) 以正整数作为容量 capacity 初始化 LRU 缓存 
-// int get(int key) 如果关键字 key 存在于缓存中，则返回关键字的值，否则返回 -1 。 
+//
+// 实现 LRUCache 类：
+//
+//
+// LRUCache(int capacity) 以正整数作为容量 capacity 初始化 LRU 缓存
+// int get(int key) 如果关键字 key 存在于缓存中，则返回关键字的值，否则返回 -1 。
 // void put(int key, int value) 如果关键字已经存在，则变更其数据值；如果关键字不存在，则插入该组「关键字-值」。当缓存容量达到上
-//限时，它应该在写入新数据之前删除最久未使用的数据值，从而为新的数据值留出空间。 
-// 
+//限时，它应该在写入新数据之前删除最久未使用的数据值，从而为新的数据值留出空间。
 //
-// 
-// 
-// 
 //
-// 进阶：你是否可以在 O(1) 时间复杂度内完成这两种操作？ 
 //
-// 
 //
-// 示例： 
 //
-// 
+//
+// 进阶：你是否可以在 O(1) 时间复杂度内完成这两种操作？
+//
+//
+//
+// 示例：
+//
+//
 //输入
 //["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
 //[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
@@ -39,18 +39,18 @@
 //lRUCache.get(1);    // 返回 -1 (未找到)
 //lRUCache.get(3);    // 返回 3
 //lRUCache.get(4);    // 返回 4
-// 
 //
-// 
 //
-// 提示： 
 //
-// 
-// 1 <= capacity <= 3000 
-// 0 <= key <= 10000 
-// 0 <= value <= 10⁵ 
-// 最多调用 2 * 10⁵ 次 get 和 put 
-// 
+//
+// 提示：
+//
+//
+// 1 <= capacity <= 3000
+// 0 <= key <= 10000
+// 0 <= value <= 10⁵
+// 最多调用 2 * 10⁵ 次 get 和 put
+//
 // Related Topics 设计 哈希表 链表 双向链表 👍 1572 👎 0
 
 package leetcode.editor.cn;
@@ -61,115 +61,129 @@ import java.util.Map;
 //java:LRU 缓存机制
 class LruCache{
     public static void main(String[] args){
-
+        LRUCache lruCache = new LruCache().new LRUCache(2);
+        lruCache.put(2,1);
+        lruCache.put(1,1);
+        lruCache.put(2,3);
+        lruCache.put(4,1);
+        int i = lruCache.get(1);
+        System.out.println(i);
+        int i1 = lruCache.get(2);
+        System.out.println(i1);
     }
     //leetcode submit region begin(Prohibit modification and deletion)
-
-    /**
-     * 哈希表配合双向链表实现
-     * map(key,node) 负责寻找节点，DLinkedNode 负责维护节点的顺序（最近使用的在最前面）
-     * size 维护 DLinkedNode 的长度
-     * get(key) {
-     *     node=map.get(key)
-     *     node存在：return val，node移动到双向链表最前面
-     *         不存在：return -1;
-     * }
-     * put(key,val) {
-     *     node=map.get(key)
-     *     node存在：更新node值（DLinkedNode的node和map里面映射的node对于更新了），node移动到双向链表最前面
-     *         不存在：新建node节点，往map和DLinkedNode最前面里存数据，size++;
-     *               size是否溢出： 是-去掉链表尾（map和DLinkedNode），size--
-     *                            否-不做操作
-     * }
+    /*
+     通过map来实现get缓存逻辑
+     通过双向链表来实现“最近最少使用”逻辑
+     通过变量size来维护双向链表的长度
+     记录head和tail这两个头尾连接的空节点方便操作
+     get(key) {
+        node = map.get(key)
+        node 存在:
+            moveToHead(node)
+            return node.val
+        不存在:
+            return -1
+     }
+     put(key) {
+        key不存在:
+            构建node
+            addToHead(node)
+            size溢出:
+                removeTail()
+                从map移除
+        存在:
+            更新map和DLinkedNode的值
+            moveToHead(node)
+     }
+     实现需要的方法:
+         moveToHead(node)
+         addToHead(node)
+         removeTail()
+         removeNode(node)
      */
     class LRUCache {
-        /**
-         * 先实现双向链表和它的几个方法
-         */
+        // 构造双向链表
         class DLinkedNode {
             int key;
-            int value;
-            DLinkedNode prev;
+            int val;
+            DLinkedNode pre;
             DLinkedNode next;
-            public DLinkedNode() {}
-            public DLinkedNode(int _key, int _value) {key = _key; value = _value;}
+            public DLinkedNode(){}
+            public DLinkedNode(int key, int val) {
+                this.key = key;
+                this.val = val;
+            }
         }
-
-        private Map<Integer, DLinkedNode> cache = new HashMap<Integer, DLinkedNode>();
-        private int size;
-        private int capacity;
-        private DLinkedNode head, tail;
-
+        // 初始化capacity，size
+        // 构造cacheMap，还要构造headNode，tailNode这两个头尾连接的空节点方便使用。
+        public Map<Integer, DLinkedNode> cacheMap = new HashMap<>();
+        public int capacity;
+        public int size;
+        public DLinkedNode headNode;
+        public DLinkedNode tailNode;
         public LRUCache(int capacity) {
             this.size = 0;
             this.capacity = capacity;
-            // 使用伪头部和伪尾部节点
-            // head <-> 1 <- 2 -> tail
-            // 增加和删除节点都在 脏节点head 和 tail中间做
-            head = new DLinkedNode();
-            tail = new DLinkedNode();
-            head.next = tail;
-            tail.prev = head;
+            headNode = new DLinkedNode();
+            tailNode = new DLinkedNode();
+            headNode.next = tailNode;
+            tailNode.pre = headNode;
         }
-
         public int get(int key) {
-            DLinkedNode node = cache.get(key);
-            if (node == null) {
+            DLinkedNode node = cacheMap.get(key);
+            if (node != null) {
+                moveToHead(node);
+                return node.val;
+            } else {
                 return -1;
             }
-            // 如果 key 存在，先通过哈希表定位，再移到头部
-            moveToHead(node);
-            return node.value;
         }
-
         public void put(int key, int value) {
-            DLinkedNode node = cache.get(key);
+            DLinkedNode node = cacheMap.get(key);
             if (node == null) {
-                // 如果 key 不存在，创建一个新的节点
-                DLinkedNode newNode = new DLinkedNode(key, value);
-                // 添加进哈希表
-                cache.put(key, newNode);
-                // 添加至双向链表的头部
-                addToHead(newNode);
-                ++size;
+                DLinkedNode linkedNode = new DLinkedNode(key, value);
+                cacheMap.put(key, linkedNode);
+                addToHead(linkedNode);
+                size++;
                 if (size > capacity) {
-                    // 如果超出容量，删除双向链表的尾部节点
-                    DLinkedNode tail = removeTail();
-                    // 删除哈希表中对应的项
-                    cache.remove(tail.key);
-                    --size;
+                    // 移除非空尾节点，需要把该非空尾节点返回出来，方便map移除
+                    DLinkedNode tailPre = removeTail();
+                    cacheMap.remove(tailPre.key);
+                    size--;
                 }
-            }
-            else {
-                // 如果 key 存在，先通过哈希表定位，再修改 value，并移到头部
-                node.value = value;
+            } else {
+                cacheMap.put(key, node);
                 moveToHead(node);
+                node.val = value;
             }
         }
-
-        private void addToHead(DLinkedNode node) {
-            node.prev = head;
-            node.next = head.next;
-            head.next.prev = node;
-            head.next = node;
+        // 重建前后节点的连接，
+        public void removeNode(DLinkedNode node) {
+            DLinkedNode preNode = node.pre;
+            DLinkedNode nextNode = node.next;
+            preNode.next = nextNode;
+            nextNode.pre = preNode;
         }
-
-        private void removeNode(DLinkedNode node) {
-            node.prev.next = node.next;
-            node.next.prev = node.prev;
+        // 移除空的尾节点tail前一个节点就行
+        public DLinkedNode removeTail() {
+            DLinkedNode tailPre = tailNode.pre;
+            removeNode(tailPre);
+            return tailPre;
         }
-
-        private void moveToHead(DLinkedNode node) {
+        // 插入到空的头节点 head 和其下一个节点中间即可
+        public void addToHead(DLinkedNode node) {
+            DLinkedNode headNext = headNode.next;
+            headNode.next = node;
+            node.pre = headNode;
+            node.next = headNext;
+            headNext.pre = node;
+        }
+        // removeNode(node) -> addToHead
+        public void moveToHead(DLinkedNode node) {
             removeNode(node);
             addToHead(node);
         }
-
-        private DLinkedNode removeTail() {
-            DLinkedNode res = tail.prev;
-            removeNode(res);
-            return res;
-        }
-
     }
 
 /**
