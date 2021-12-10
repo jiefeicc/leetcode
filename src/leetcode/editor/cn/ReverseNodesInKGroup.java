@@ -63,11 +63,12 @@ class ReverseNodesInKGroup{
         ListNode test2 = new ListNode(2);
         ListNode test3 = new ListNode(3);
         ListNode test4 = new ListNode(4);
-        test4.next = new ListNode(5);
+        ListNode test5 = new ListNode(5);
+        test4.next = test5;
         test3.next = test4;
         test2.next = test3;
         test.next = test2;
-        ListNode listNode = solution.reverseKGroup(test, 2);
+        ListNode listNode = solution.reverseKGroup1(test, 2);
         System.out.println(listNode);
     }
     //leetcode submit region begin(Prohibit modification and deletion)
@@ -87,7 +88,6 @@ class ReverseNodesInKGroup{
         end 往后移动 k 个节点，这 k 个节点单拿出来组成一个链表进行翻转，pre 设置到 end 的位置。
         重复上述操作，直到 end 节点往后移动不到 k 个节点。
          */
-        // ToDo 不满 K 个也要翻转的处理方法
         public ListNode reverseKGroup(ListNode head, int k) {
             ListNode dummy = new ListNode(0);
             dummy.next = head;
@@ -117,7 +117,40 @@ class ReverseNodesInKGroup{
             }
             return dummy.next;
         }
+        // 不满 K 个也要翻转的处理方法
+        public ListNode reverseKGroup1(ListNode head, int k) {
+            ListNode dummy = new ListNode(0);
+            dummy.next = head;
+            ListNode pre = dummy;
+            ListNode end = dummy;
+            ListNode tmp = null;
+            while (end.next != null) {
+                for (int i=0; i<k&&end!=null; i++) {
+                    // 原来逻辑不变，用一个tmp记录end
+                    tmp = end;
+                    end = end.next;
+                }
+                if (end == null) {
+                    // 当end到最后空节点时，把end移回最后的尾结点，不做break，而是对最后这段进行翻转
+                    end = tmp;
+                }
+                // 记录断点并断开链表
+                ListNode right = end.next;
+                end.next = null;
 
+                // 翻转这一段链表
+                ListNode left = pre.next;
+                pre.next = reverse(left);
+
+                // left已经到了右边了，此时连接链表
+                left.next = right;
+
+                // pre 设置到 end 的位置
+                pre = left;
+                end = left;
+            }
+            return dummy.next;
+        }
         /*
         翻转链表
         cur = head，pre = null
