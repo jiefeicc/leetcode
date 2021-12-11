@@ -1,47 +1,47 @@
-//给定一个字符串 s ，请你找出其中不含有重复字符的 最长子串 的长度。 
+//给定一个字符串 s ，请你找出其中不含有重复字符的 最长子串 的长度。
 //
-// 
 //
-// 示例 1: 
 //
-// 
+// 示例 1:
+//
+//
 //输入: s = "abcabcbb"
-//输出: 3 
+//输出: 3
 //解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
-// 
 //
-// 示例 2: 
 //
-// 
+// 示例 2:
+//
+//
 //输入: s = "bbbbb"
 //输出: 1
 //解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
-// 
 //
-// 示例 3: 
 //
-// 
+// 示例 3:
+//
+//
 //输入: s = "pwwkew"
 //输出: 3
 //解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。
 //     请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
-// 
 //
-// 示例 4: 
 //
-// 
+// 示例 4:
+//
+//
 //输入: s = ""
 //输出: 0
-// 
 //
-// 
 //
-// 提示： 
 //
-// 
-// 0 <= s.length <= 5 * 10⁴ 
-// s 由英文字母、数字、符号和空格组成 
-// 
+//
+// 提示：
+//
+//
+// 0 <= s.length <= 5 * 10⁴
+// s 由英文字母、数字、符号和空格组成
+//
 // Related Topics 哈希表 字符串 滑动窗口 👍 5970 👎 0
 
 package leetcode.editor.cn;
@@ -50,37 +50,64 @@ import java.util.HashMap;
 import java.util.Map;
 
 //java:无重复字符的最长子串
-class LongestSubstringWithoutRepeatingCharacters{
-    public static void main(String[] args){
+class LongestSubstringWithoutRepeatingCharacters {
+    public static void main(String[] args) {
         Solution solution = new LongestSubstringWithoutRepeatingCharacters().new Solution();
-        solution.lengthOfLongestSubstring("abba");
+        solution.lengthOfLongestSubstring("abbba");
     }
+
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
-        /**
-         * 滑动窗口
-         * 两个指针，left,right构成滑动窗口
-         * 用一个map(字节, 字节所在位置)来映射字节和他的位置
-         * max维护最大长度
-         * right向右移动，往map里面添字节，判断是否包含
-         * 包含那就left移动到不包含的位置，不包含就...
-         * 添加字节，更新max
+        /*
+        abcabcbb
+        滑动窗口
+
+        低效率：使用s.contain来判断，用s的left,right截取来维持滑动窗口
+        left,right维持一个窗口，max维护最大值
+        right每次往前移动，然后拿出最新的那个字符c
+        当最新的字符c包含在窗口里面，那就移动left直到窗口不包含c
+        !s(left,right).contain(c) {
+            max = Math.max(s(left,right+1).len,max)
+        } else {
+            while(!s(left,right).contain(c)) {
+                left++;
+            }
+        }
+
+        高效率：使用map.contain来判断，使用left,right截取来维持滑动窗口，用map记录s.charAt(index),index
+        right每次往前移动，然后拿出最新的那个字符c
+        当最新的字符c包含在窗口里面，那就从map里面取出c的位置，left = index(c)+1，注意：c的位置可能在left的左边，所以要判断一下大小(abba)
+        再放入最新的c，然后计算max
          */
         public int lengthOfLongestSubstring(String s) {
             int max = 0;
             Map<Character, Integer> map = new HashMap<>();
-            for (int left = 0, right = 0; right < s.length(); right++) {
+            for (int left = 0,right = 0; right < s.length(); right++) {
                 char c = s.charAt(right);
                 if (map.containsKey(c)) {
-                    // left = map.get(c)+1;
-                    // 由于map没有移除元素，所以c虽然是之前出现过的，但是重复的不在滑动窗口中，在left左边，
-                    // 重新获取left位置之后可能会使left向左移了
-                    // 例如“abba”,到最后一个a时，把left的位置放在第一个b的位置了
-                    // 所以和当前left比大小，小了说明重的那个元素不在滑动窗口里面，就不需要移动滑动窗口
+                    // abba  c的位置可能在left的左边，所以要判断一下大小
                     left = Math.max(map.get(c)+1, left);
                 }
-                max = Math.max(max, right - left + 1);
+                // put之后会把原来的值覆盖了，map里面永远只有一个c
                 map.put(c, right);
+                max = Math.max(max, right-left+1);
+            }
+            return max;
+        }
+
+        public int lengthOfLongestSubstring1(String s) {
+            int max = 0;
+            for (int left = 0,right = 0; right < s.length(); right++) {
+                String c = s.substring(right, right + 1);
+                String String = s.substring(left, right);
+                if (!String.contains(c)) {
+                    max = Math.max(String.length() + 1, max);
+                } else {
+                    while (String.contains(c)) {
+                        left++;
+                        String = s.substring(left, right);
+                    }
+                }
             }
             return max;
         }
