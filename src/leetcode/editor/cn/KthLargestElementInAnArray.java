@@ -81,25 +81,24 @@ class KthLargestElementInAnArray{
             }
         }
         public int partition(int[] nums, int left, int right) {
-            //temp就是基准位
+            // temp就是基准位
             int pivot = nums[left];
             int i = left;
             int j = right;
             while (i<j) {
-                //先看右边，依次往左递减
-                while (pivot<=nums[j]&&i<j) {
+                // 从右边开始找到比基准数小的
+                while (i<j && nums[j]>=pivot) {
                     j--;
                 }
-                //再看左边，依次往右递增
-                while (pivot>=nums[i]&&i<j) {
+                // 从左边开始找到比基准数大的
+                while (i<j && nums[i]<=pivot) {
                     i++;
                 }
-                //此时满足条件（nums[j] < pivot < nums[i]），交换
-                if (i<j) {
-                    swap(nums, i, j);
-                }
+                // 此时满足条件（nums[j] < pivot < nums[i]），交换
+                swap(nums, i, j);
             }
-            //最后将基准为与i和j相等位置的数字交换
+            // 最终i，j移动到一个位置，这个位置左边的数<=pivot,右边的数>=pivot
+            // 最后将基准为与i和j相等位置的数字交换
             swap(nums, left, i);
             return  i;
         }
