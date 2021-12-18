@@ -72,7 +72,8 @@ class CombinationSum{
     class Solution {
         /*
         同样的回溯算法，每次判断的满足条件是target=0
-        // 需要先给数组排序， 让target从小到大的减
+        注：当target<0那什么都不做就直接返回
+        注：需要先给数组排序， 让target从小到大的减
         递归传给下一层 target - candidates[i]
          */
         List<List<Integer>> res = new ArrayList<>();
