@@ -74,6 +74,7 @@ class CombinationSum{
         同样的回溯算法，每次判断的满足条件是target=0
         注：当target<0那什么都不做就直接返回
         注：需要先给数组排序， 让target从小到大的减
+        注：同一个位置的数字无限次使用，所以传给下一层 i
         递归传给下一层 target - candidates[i]
          */
         List<List<Integer>> res = new ArrayList<>();
@@ -85,13 +86,19 @@ class CombinationSum{
             return res;
         }
         private void backtrack(int[] candidates, int target, int start) {
-            if (target < 0) return;
+            if (target < 0) {
+                return;
+            }
             if (target == 0) {
                 res.add(new ArrayList<>(list));
                 return;
             }
             for (int i = start; i < candidates.length; i++) {
-                if (target < candidates[i]) break;
+                // 加个剪枝条件
+                // 很明显已经target < candidates[i]了，后面target减下去肯定<0
+                if (target < candidates[i]) {
+                    break;
+                }
                 list.add(candidates[i]);
                 backtrack(candidates, target - candidates[i], i);
                 list.removeLast();

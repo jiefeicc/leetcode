@@ -72,8 +72,12 @@ class PermutationsIi{
         }
         // 剪枝
         private boolean cut(int[] nums, boolean[] used, int i) {
-            // 剪枝条件：i > 0 是为了保证 nums[i - 1] 有意义
-            // 写 !used[i - 1] 是因为 nums[i - 1] 在过程中刚刚被撤销选择
+            /*
+            1,2,2,5
+            1, 2(第1个2), 2(第2个2), 8 和 1, 2(第2个2), 2(第1个2), 8  是重复的
+            所以使用 nums[i - 1] && !used[i - 1]作为条件来剪枝
+            i>0 保证nums[i - 1]合法
+             */
             return i > 0 && nums[i] == nums[i - 1] && !used[i - 1];
         }
     }
