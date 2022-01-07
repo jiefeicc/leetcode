@@ -1,18 +1,18 @@
-//假设你正在爬楼梯。需要 n 阶你才能到达楼顶。 
+//假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
 //
-// 每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？ 
+// 每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
 //
-// 注意：给定 n 是一个正整数。 
+// 注意：给定 n 是一个正整数。
 //
-// 示例 1： 
+// 示例 1：
 //
 // 输入： 2
 //输出： 2
 //解释： 有两种方法可以爬到楼顶。
 //1.  1 阶 + 1 阶
-//2.  2 阶 
+//2.  2 阶
 //
-// 示例 2： 
+// 示例 2：
 //
 // 输入： 3
 //输出： 3
@@ -20,7 +20,7 @@
 //1.  1 阶 + 1 阶 + 1 阶
 //2.  1 阶 + 2 阶
 //3.  2 阶 + 1 阶
-// 
+//
 // Related Topics 记忆化搜索 数学 动态规划 👍 2083 👎 0
 
 package leetcode.editor.cn;
@@ -40,20 +40,40 @@ class ClimbingStairs{
         从第1级开始爬，上一阶，1种方法
          */
         public int climbStairs(int n) {
-            int[] dp = new int[n+2];
+            int[] dp = new int[n+1];
             dp[0] = 1;
-            dp[1] = 1;
-            for (int i=2; i<=n; i++) {
-                dp[i] = dp[i-1] + dp[i-2];
+            int[] steps = new int[]{1,2};
+//            for (int i=2; i<=n; i++) {
+//                dp[i] = dp[i-1] + dp[i-2];
+//            }
+            for (int i=1; i<=n; i++) {
+                for (int j=0; j<steps.length; j++) {
+                    int step = steps[j];
+                    if (i >= step) {
+                        dp[i] = dp[i] + dp[i-step];
+                    }
+                }
             }
             return dp[n];
+            /*
+            用这个是不可以的，这种把步长的顺序固定住了，相当于求组合数，本题求排列数
+            （212 和 122在排列里面是不同的，在组合里面是相同的）
+            * */
+//            for (int j=0; j<steps.length; j++) {
+//                int step = steps[j];
+//                for (int i=2; i<=n; i++) {
+//                    if (i >= step) {
+//                        dp[i]+=dp[i-step];
+//                    }
+//                }
+//            }
         }
         /*
         泛化，可以走任意步时的解法
         dp[i] = dp[i-1] + dp[i-2] + dp[i-3] + ...........
          */
         public int _climbStairs(int n) {
-            int[] dp = new int[n+2];
+            int[] dp = new int[n+1];
             dp[0] = 1;
             for (int i=1; i<=n; i++) {
                 for (int j=0; j<=i; j++) {
