@@ -28,20 +28,41 @@ package leetcode.editor.cn;
 class ClimbingStairs{
     public static void main(String[] args){
         Solution solution = new ClimbingStairs().new Solution();
+        for (int i=0; i<=5; i++) {
+            int n = solution._climbStairs(i);
+            System.out.println(i + ":" + n);
+        }
     }
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
+        /*
+        从第0级开始爬，不动，1种方法
+        从第1级开始爬，上一阶，1种方法
+         */
         public int climbStairs(int n) {
             int[] dp = new int[n+2];
-            dp[0] = 0;
+            dp[0] = 1;
             dp[1] = 1;
-            dp[2] = 2;
-            for (int i=3; i<n+1; i++) {
+            for (int i=2; i<=n; i++) {
                 dp[i] = dp[i-1] + dp[i-2];
             }
             return dp[n];
         }
+        /*
+        泛化，可以走任意步时的解法
+        dp[i] = dp[i-1] + dp[i-2] + dp[i-3] + ...........
+         */
+        public int _climbStairs(int n) {
+            int[] dp = new int[n+2];
+            dp[0] = 1;
+            for (int i=1; i<=n; i++) {
+                for (int j=0; j<=i; j++) {
+                    dp[i] = dp[i] + dp[i-j];
+                }
+            }
+            return dp[n];
+        }
     }
-//leetcode submit region end(Prohibit modification and deletion)
+    //leetcode submit region end(Prohibit modification and deletion)
 
 }

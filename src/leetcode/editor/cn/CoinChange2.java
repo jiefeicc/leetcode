@@ -70,7 +70,7 @@ class CoinChange2{
             if (j - coins[i-1] >= 0)
                     dp[i][j] = dp[i - 1][j] + dp[i][j-coins[i-1]];
          */
-        int change(int amount, int[] coins) {
+        int _change(int amount, int[] coins) {
             int n = coins.length;
             int[][] dp = new int[n + 1][amount + 1];
             // base case
@@ -86,6 +86,29 @@ class CoinChange2{
                     }
             }
             return dp[n][amount];
+        }
+        /*
+        状态定义：dp[i] 表示金额之和等于 x 的硬币组合数
+        初始状态：dp[0] = 1
+
+        状态转移方程：dp[i] = dp[i-1] + dp[i-2] + dp[i-3] + ...........
+        注意！爬楼梯泛化解法相当于排列，顺序不同表示不同的解法，本题解法类似于组合，顺序不同也表示相同的解法
+
+        本题将 j(coin) 放在外层先遍历，外层循环是遍历数组 coins 的值，内层循环是遍历不同的金额之和
+        先花完一种钱，再花下一种，所以就不会重复
+
+         */
+        public int change(int amount, int[] coins) {
+            int[] dp = new int[amount + 1];
+            dp[0] = 1;
+            for (int coin : coins) {
+                for (int i = 1; i <= amount; i++) {
+                    if (i >= coin) {
+                        dp[i] += dp[i - coin];
+                    }
+                }
+            }
+            return dp[amount];
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)

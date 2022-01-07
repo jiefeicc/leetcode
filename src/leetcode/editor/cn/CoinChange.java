@@ -80,7 +80,7 @@ class CoinChange{
             for (int i=1;i<=amount;i++){
                 for (int coin : coins) {
                     if (coin <= i) {
-                        // dp[11] = min (dp[10] + 1, dp[9] + 1, dp[6] + 1)
+                        // dp[11] = min (dp[10] + 1, dp[9] + 1, dp[6] + 1，............)
                         // 所以遍历 coins ，dp[i] = Math.min(dp[i], dp[i - coin] + 1)
                         // min 中的dp[i] 记录的遍历过程中的最小值
                         dp[i] = Math.min(dp[i], dp[i - coin] + 1);
