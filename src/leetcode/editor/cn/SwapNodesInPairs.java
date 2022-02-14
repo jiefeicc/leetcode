@@ -40,8 +40,7 @@ class SwapNodesInPairs{
         Solution solution = new SwapNodesInPairs().new Solution();
         int[] nums = new int[]{1,2,3,4};
         ListNode head = new ListNode().getListNode(nums);
-        // solution.swapPairs(head);
-        new ListNode().printListNode(head);
+        solution.swapPairs(head);
     }
     //leetcode submit region begin(Prohibit modification and deletion)
     /**
@@ -55,34 +54,29 @@ class SwapNodesInPairs{
      * }
      */
     class Solution {
+        /*
+        迭代解法
+        1->2->3->4
+        把1，2换位，然后3，4换位 start.next = end.next,，end.next = start
+        cur 作用：cur 指向待处理的end，end，start处理完成后（换位），temp再指向start
+         */
         public ListNode swapPairs(ListNode head) {
-            //增加一个特殊节点方便处理
-            ListNode p = new ListNode(-1);
-            p.next = head;
-            //创建a，b两个指针，这里还需要一个tmp指针
-            ListNode a = p;
-            ListNode b = p;
-            ListNode tmp = p;
-            while(b.next!=null && b.next.next!=null) {
-                //a前进一位，b前进两位
-                a = a.next;
-                b = b.next.next;
-                //这步很关键，tmp指针用来处理边界条件的
-                //假设链表是1->2->3->4，a指向1，b指向2
-                //改变a和b的指向，于是就变成2->1，但是1指向谁呢？
-                //1是不能指向2的next，1应该指向4，而循环迭代的时候一次处理2个节点
-                //1和2的关系弄清楚了，3和4的关系也能弄清楚，但需要一个指针来处理
-                //2->1，4->3的关系，tmp指针就是干这个用的
-                tmp.next = b;
-                a.next = b.next;
-                b.next = a;
-                //现在链表就变成2->1->3->4
-                //tmp和b都指向1节点，等下次迭代的时候
-                //a就变成3，b就变成4，然后tmp就指向b，也就是1指向4
-                tmp = a;
-                b = a;
+            ListNode dummy = new ListNode(-1);
+            dummy.next = head;
+            ListNode cur = dummy;
+            while(cur.next != null && cur.next.next != null) {
+                ListNode start = cur.next;
+                ListNode end = cur.next.next;
+                // temp 指向在上一轮处理过后的的链表尾，这一步操作把处理好的链表尾指向待处理的链表头
+                // temp 指向的是地址，后面 end 处理好了，temp指的就对了
+                cur.next = end;
+                // start,end 交换位置
+                start.next = end.next;
+                end.next = start;
+                // temp 指向处理过后的的链表尾
+                cur = start;
             }
-            return p.next;
+            return dummy.next;
         }
 
         public ListNode swapPairs1(ListNode head) {
@@ -92,14 +86,14 @@ class SwapNodesInPairs{
             }
             //假设链表是 1->2->3->4
             //这句就先保存节点2
-            ListNode tmp = head.next;
+            ListNode temp = head.next;
             //继续递归，处理节点3->4
             //当递归结束返回后，就变成了4->3
             //于是head节点就指向了4，变成1->4->3
-            head.next = swapPairs1(tmp.next);
+            head.next = swapPairs1(temp.next);
             //将2节点指向1
-            tmp.next = head;
-            return tmp;
+            temp.next = head;
+            return temp;
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)

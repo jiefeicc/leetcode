@@ -25,12 +25,25 @@ public class ListNode {
         return head;
     }
 
-    public void printListNode(ListNode node) {
+    public String getListNodeStr(ListNode node) {
         List<Integer> list = new ArrayList<>();
         while (node != null) {
             list.add(node.val);
             node = node.next;
         }
-        System.out.println(Arrays.toString(list.toArray()));
+        String s = Arrays.toString(list.toArray());
+        String nodeStr = s.replace(",", "->").replace("[", "").replace("]", "");
+        return nodeStr;
+    }
+
+    public String getListNodeStr(String str, ListNode node) {
+        List<Integer> list = new ArrayList<>();
+        while (node != null) {
+            list.add(node.val);
+            node = node.next;
+        }
+        String s = Arrays.toString(list.toArray());
+        String nodeStr = s.replace(",", "->").replace("[", str + ": ").replace("]", "");
+        return nodeStr;
     }
 }
