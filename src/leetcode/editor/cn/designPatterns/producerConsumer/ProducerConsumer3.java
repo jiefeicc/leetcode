@@ -20,6 +20,9 @@ public class ProducerConsumer3 {
     如果使用ArrayBlockingQueue作为队列实现，则在同一时刻只能放入或取出，因为ArrayBlockingQueue内部只使用了一个重入锁来控制并发修改操作。
      */
 
+    class Goods {
+    }
+
     class Producer extends Thread {
         private String threadName;
         private BlockingQueue<Goods> queue;

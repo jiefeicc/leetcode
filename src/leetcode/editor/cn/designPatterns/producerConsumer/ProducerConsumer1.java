@@ -1,14 +1,14 @@
 package leetcode.editor.cn.designPatterns.producerConsumer;
 
-import org.junit.Test;
-
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
 public class ProducerConsumer1 {
+    static class Goods {
+    }
 
-    class Producer extends Thread {
+    static class Producer extends Thread {
         private String threadName;
         private Queue<Goods> queue;
         private int maxSize;
@@ -48,7 +48,7 @@ public class ProducerConsumer1 {
         }
     }
 
-    class Consumer extends Thread {
+    static class Consumer extends Thread {
         private String threadName;
         private Queue<Goods> queue;
 
@@ -84,10 +84,7 @@ public class ProducerConsumer1 {
         }
     }
 
-
-    @Test
-    public void test() {
-
+    public static void main(String[] args) {
         int maxSize = 5;
         Queue<Goods> queue = new LinkedList<>();
 
@@ -104,9 +101,5 @@ public class ProducerConsumer1 {
         producer3.start();
         consumer1.start();
         consumer2.start();
-
-        while (true) {
-
-        }
     }
 }
