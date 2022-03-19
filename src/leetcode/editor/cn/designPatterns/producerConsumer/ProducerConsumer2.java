@@ -15,6 +15,10 @@ public class ProducerConsumer2 {
     await():等待Condition的满足，会释放锁
     signal():唤醒其他正在等待该Condition的线程
      */
+
+    class Goods {
+    }
+
     class Producer extends Thread {
 
         private String threadName;
