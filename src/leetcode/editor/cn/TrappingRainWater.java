@@ -38,13 +38,13 @@ import java.util.Stack;
 class TrappingRainWater{
     public static void main(String[] args){
         Solution solution = new TrappingRainWater().new Solution();
+        System.out.println(solution.trap(new int[]{0,1,0,2,1,0,1,3,2,1,2,1}));
     }
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
         /*
         单调栈解法
-        https://leetcode-cn.com/problems/trapping-rain-water/solution/dan-diao-zhan-jie-jue-jie-yu-shui-wen-ti-by-sweeti/
-        将数组索引操作进入单调栈
+        用非递增栈存储数组索引，入栈递减或者相等
          */
         public int trap(int[] height) {
             int len = height.length;
@@ -54,16 +54,23 @@ class TrappingRainWater{
             Stack<Integer> stack = new Stack<>();
             int res = 0;
             for (int i=0; i<len; i++) {
+                // 当栈不为空 且 即将入栈的数开始递增，那就不入栈，开始做处理计算雨水面积
                 while (!stack.isEmpty() && height[stack.peek()] < height[i]) {
-                    int curIdx = stack.pop();
-                    while (!stack.isEmpty() && height[curIdx] == height[stack.peek()]) {
+                    // 取出栈顶，height[curIdx] 作为基底，后续计算面积从此往上面计算
+                    int baseIndex = stack.pop();
+                    // 如果有多个连续相同的基底，那就出栈，往左找到第一个比基底高的数的索引
+                    while (!stack.isEmpty() && height[baseIndex] == height[stack.peek()]) {
                         stack.pop();
                     }
+                    // 基底左边是空的，那雨水接不住的，例如基底左边是 y 轴
                     if (!stack.isEmpty()) {
-                        int stackTop = stack.peek();
-                        res += (Math.min(height[stackTop], height[i]) - height[curIdx]) * (i - stackTop -1);
+                        // 从栈中到左边第一个比基底高的数的索引
+                        int firstTopIndex = stack.peek();
+                        // 这部分雨水的面积 = (min(左边第一个比基底高的数，最开始没入栈的索引对应的数) - 基底) * 没入栈的索引到栈中左边第一个比基底高的数的索引之间夹着的距离
+                        res += (Math.min(height[firstTopIndex], height[i]) - height[baseIndex]) * (i - firstTopIndex -1);
                     }
                 }
+                // 当栈是空或者遍历取出数组的数不大于栈顶，那就入栈
                 stack.add(i);
             }
             return res;
