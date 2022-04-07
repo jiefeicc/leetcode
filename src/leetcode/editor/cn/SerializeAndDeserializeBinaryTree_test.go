@@ -59,7 +59,6 @@ func (this *Codec) serialize(root *TreeNode) string {
 			res = append(res, "null")
 		}
 	}
-	strings.Join(res, " ")
 	return strings.Join(res, ",")
 }
 
