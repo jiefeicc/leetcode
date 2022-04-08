@@ -19,17 +19,17 @@ func searchMatrix(matrix [][]int, target int) bool {
     col := len(matrix[0])
     l := 0
     r := row * col -1
-    for l < r {
-        mid := (l + r + 1) / 2
+    for l <= r {
+        mid := (l + r) / 2
         tmp := matrix[mid / col][mid % col]
-        if tmp == target {
-            return true
-        } else if tmp < target {
+        if tmp < target {
             l = mid + 1
-        } else {
+        } else if tmp > target {
             r = mid - 1
+        } else {
+            return true
         }
     }
-    return matrix[r / col][r % col] == target
+    return false
 }
 //leetcode submit region end(Prohibit modification and deletion)

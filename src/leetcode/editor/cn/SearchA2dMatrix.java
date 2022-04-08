@@ -15,24 +15,23 @@ class SearchA2dMatrix{
         取中间数时 tmp = mat[mid / col][mid % col]
         mid/col，mid%col 即可得到中间索引的数。
          */
-        public boolean searchMatrix(int[][] mat, int t) {
+        public boolean searchMatrix(int[][] mat, int target) {
             int row = mat.length;
             int col = mat[0].length;
             int l = 0;
             int r = row * col - 1;
-            while (l < r) {
-                int mid = (l + r + 1) / 2;
+            while (l <= r) {
+                int mid = (l + r) / 2;
                 int tmp = mat[mid / col][mid % col];
-                if (tmp == t) {
-                    return true;
-                } else if (tmp < t) {
+                if (tmp < target) {
                     l = mid + 1;
-                }
-                else {
+                } else if (tmp > target) {
                     r = mid - 1;
+                } else {
+                    return true;
                 }
             }
-            return mat[r / col][r % col] == t;
+            return false;
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)
