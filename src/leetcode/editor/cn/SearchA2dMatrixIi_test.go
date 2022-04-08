@@ -12,7 +12,7 @@ func TestSearchA2dMatrixIi(t *testing.T){
 根据矩阵特性：一个数比他上面的大，比他右边的小
 从左下角开始遍历
  */
-func searchMatrix(matrix [][]int, target int) bool {
+func _searchMatrix(matrix [][]int, target int) bool {
     row := len(matrix)
     col := len(matrix[0])
     i := row - 1
