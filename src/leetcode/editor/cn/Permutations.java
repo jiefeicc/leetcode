@@ -47,7 +47,6 @@ class Permutations{
         System.out.println(lists);
     }
     //leetcode submit region begin(Prohibit modification and deletion)
-
     public  class Solution {
         // 使用一个动态数组保存所有可能的全排列
         List<List<Integer>> res = new ArrayList<>();
@@ -60,6 +59,8 @@ class Permutations{
         }
         private void backtrack(int[] nums, boolean[] used) {
             if (list.size() == nums.length) {
+                // 这里的 new ArrayList<>(list)) 意思是复制一个新的 list 传到res里面去
+                // 因为用的全局 list，如果不这么处理，后续改变 list，res里面的 list 也会被改变
                 res.add(new ArrayList<>(list));
                 return;
             }
@@ -76,5 +77,4 @@ class Permutations{
         }
     }
     //leetcode submit region end(Prohibit modification and deletion)
-
 }
