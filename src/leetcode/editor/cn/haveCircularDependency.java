@@ -33,6 +33,13 @@ public class haveCircularDependency {
             inDegree[prerequisite[1]]++;
             // 创建哈希表（节点，该节点指向的节点集合）
             if (map.containsKey(prerequisite[0])) {
+                    /*
+                    下面这种写法是上面写法的详细，传到 map 中的 list 是个“引用”
+                    所以直接把 list “引用” get 出来，然后做改变，map 中的 list 也就变了
+                    List<Integer> tmpList = map.get(prerequisite[0]);
+                    tmpList.add(prerequisite[1]);
+                    map.put(prerequisite[0], tmpList);
+                     */
                 map.get(prerequisite[0]).add(prerequisite[1]);
             } else {
                 List<Integer> list = new ArrayList<>();
@@ -48,8 +55,8 @@ public class haveCircularDependency {
             }
         }
         // 入度为0的节点出队放结果集
-        // 更新该节点指向的节点的入度
-        // 查哈希表，将入度为零节点的入队
+        // 查哈希表，更新某个节点（被该节点指向的）的入度
+        // 若该节点入度为0了，再入队。
         while (!queue.isEmpty()){
             Integer cur = queue.remove();
             res.add(cur);
