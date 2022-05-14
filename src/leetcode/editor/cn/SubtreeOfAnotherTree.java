@@ -60,6 +60,8 @@ class SubtreeOfAnotherTree{
     class Solution {
         /*
         递归root每个节点，判断两个树是否相等
+        这一题是判断是否是子树，只要递归的判断root的每个节点，看subRoot是否是该节点的子树即可。
+        和树的子结构有本质区别
          */
         public boolean isSubtree(TreeNode root, TreeNode subRoot) {
             if (subRoot == null) {
