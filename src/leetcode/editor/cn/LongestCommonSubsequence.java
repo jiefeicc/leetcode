@@ -53,32 +53,34 @@ class LongestCommonSubsequence{
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
         /*
-        状态定义：dp[i][j]：text[0~i]和text2[0~j]的最长LCS
-        base case : i or j==0,dp[i][j]=0;
+        状态定义：dp[i][j]：text1[0 ~ (i - 1)] 和 text2[0 ~ (j - 1)]的最长 LCS
+        base case : i or j==0, dp[i][j]=0;
+        注意：dp数组 对应 text数组，两者下标错了 1 位， dp[0][0] 对应 text1[-1], text2[-1]，意思是 text1[-1], text2[-1]不存在，所以肯定没有 LCS。
         状态转移方程：
-            text1[i]=text2[j]  : dp[i][j]=1+dp[i-1][j-1]
-            text1[i]!=text2[j] : dp[i][j]= max(dp[i-1][j],dp[i][j-1])
+            text1[i] = text2[j]  : dp[i][j] = 1 + dp[i - 1][j - 1]
+            text1[i] != text2[j] : dp[i][j] = max(dp[i - 1][j],dp[i][j - 1])
          */
         public int longestCommonSubsequence(String text1, String text2) {
-            if (text1 == null || text2 == null || text1.length() == 0 || text2.length() == 0)
+            if (text1 == null || text2 == null) {
                 return 0;
-            int n=text1.length();
-            int m=text2.length();
-            int[][] dp = new int[n+1][m+1];
-            for (int i=1;i<=n;i++){
-                for (int j=1;j<=m;j++){
-                    //数组从0开始的，所以i-1，j-1；
-                    if (text1.charAt(i-1)==text2.charAt(j-1)){
-                        dp[i][j]=1+dp[i-1][j-1];
+            }
+            int n = text1.length();
+            int m = text2.length();
+            int[][] dp = new int[n + 1][m + 1];
+            for (int i = 1; i <= n; i++){
+                for (int j = 1; j <= m; j++){
+                    //dp数组 对应 text数组，两者下标需要错 1 位。dp 从 1 开始，所以 text 从 i - 1, j - 1 开始。
+                    if (text1.charAt(i - 1) == text2.charAt(j - 1)){
+                        dp[i][j] = 1 + dp[i - 1][j - 1];
                     }
                     else {
-                        dp[i][j]= Math.max(dp[i-1][j],dp[i][j-1]);
+                        dp[i][j] = Math.max(dp[i - 1][j],dp[i][j - 1]);
                     }
                 }
             }
             return dp[n][m];
         }
     }
-//leetcode submit region end(Prohibit modification and deletion)
+    //leetcode submit region end(Prohibit modification and deletion)
 
 }
