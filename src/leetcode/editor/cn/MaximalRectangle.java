@@ -2,14 +2,50 @@ package leetcode.editor.cn;
 
 import java.util.*;
 
-class LargestRectangleInHistogram{
+class MaximalRectangle{
     public static void main(String[] args){
-        Solution solution = new LargestRectangleInHistogram().new Solution();
-        solution.largestRectangleArea(new int[]{2,1,2});
+        Solution solution = new MaximalRectangle().new Solution();
+        solution.maximalRectangle(new char[][]{
+                {'1','0','1','0','0'},
+                {'1','0','1','1','1'},
+                {'1','1','1','1','1'},
+                {'1','0','0','1','0'}
+        });
     }
-    //柱状图中最大的矩形
+    //最大矩形
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
+        /*
+        解题思路：
+            对于每一行，求出 heights[]，可以把问题转换成 84.柱状图中最大的矩形
+            遍历对比求出最大值
+        */
+        public int maximalRectangle(char[][] matrix) {
+            int res = 0;
+            for (int i = 0; i < matrix.length; i++) {
+                int[] heights = getHeights(matrix, i);
+                res = Math.max(res, largestRectangleArea(heights));
+            }
+            return res;
+        }
+
+        public int[] getHeights(char[][] matrix, int bottom) {
+            int width = matrix[0].length;
+            int[] heights = new int[matrix[0].length];
+            for (int j = 0; j < width; j++) {
+                int h = 0;
+                for (int i = bottom; i >= 0; i--) {
+                    if (matrix[i][j] == '1') {
+                        h++;
+                    } else {
+                        break;
+                    }
+                }
+                heights[j] = h;
+            }
+            return heights;
+        }
+
         /*
         解题思路：单调增栈（相等或者更大）
             暴力解法：
@@ -18,8 +54,8 @@ class LargestRectangleInHistogram{
             暴力解法的优化思路，针对指定的柱体 heights[i]，用O(1)时间复杂度的方法找到左右第一个比 heights[i] 小的数，计算面积。
             单调增栈，遍历到的比栈顶元素小的数，针对当前栈顶的柱体，栈顶元素在栈中的下一个元素，就是它左边第一个比它小的数，
             遍历到的比栈顶元素大的数，就是右边第一个比它小的数。
-            因此，对应栈顶柱体 heights[i]，它左右第一个比它小的数的位置就确定了，就可以计算面积了。
-        */
+            因此，对应栈顶柱体 heights[i]，它左右第一个比它小的数的位置就确定了，就可以计算面积了
+         */
         public int largestRectangleArea(int[] heights) {
             // 这里为了代码简便，在柱体数组的头和尾加了两个高度为 0 的柱体。
             int[] tmp = new int[heights.length + 2];
@@ -41,31 +77,7 @@ class LargestRectangleInHistogram{
             }
             return area;
         }
-
-        /*
-        暴力解法：
-            遍历数组，以当前柱子高度为h，分别往左往右，找到能组成高为 h，宽为 w 的矩形。
-            得出最大的矩形。
-        */
-        public int _largestRectangleArea(int[] heights) {
-            int area = 0;
-            int n = heights.length;
-            for (int i = 0; i < n; i++) {
-                int w = 1;
-                int h = heights[i];
-                int j = i;
-                while (--j >= 0 && heights[j] >= h) {
-                    w++;
-                }
-                j = i;
-                while (++j < n && heights[j] >= h) {
-                    w++;
-                }
-                area = Math.max(area, w * h);
-            }
-            return area;
-        }
     }
-//leetcode submit region end(Prohibit modification and deletion)
+    //leetcode submit region end(Prohibit modification and deletion)
 
 }
