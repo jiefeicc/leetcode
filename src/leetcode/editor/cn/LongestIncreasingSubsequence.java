@@ -72,7 +72,7 @@ class LongestIncreasingSubsequence{
         初始状态：dp[i] 所有元素置 1，含义是每个元素都至少可以单独成为子序列，此时长度都为 1。
         返回值：dp 列表最大值
         */
-        public int lengthOfLIS(int[] nums) {
+        public int _lengthOfLIS(int[] nums) {
             int len = nums.length;
             if (len == 0) {
                 return len;
@@ -107,38 +107,63 @@ class LongestIncreasingSubsequence{
             return res;
         }
 
-        // 纸牌算法，二分
-        public int _lengthOfLIS(int[] nums) {
-            int[] top = new int[nums.length];
-            // 牌堆数初始化为 0
-            int piles = 0;
-            for (int i = 0; i < nums.length; i++) {
-                // 要处理的扑克牌
-                int poker = nums[i];
-
-                /***** 搜索左侧边界的二分查找 *****/
-                int left = 0, right = piles;
-                while (left < right) {
-                    int mid = (left + right) / 2;
-                    if (top[mid] > poker) {
-                        right = mid;
-                    } else if (top[mid] < poker) {
-                        left = mid + 1;
-                    } else {
-                        right = mid;
-                    }
-                }
-                /*********************************/
-
-                // 没找到合适的牌堆，新建一堆
-                if (left == piles) piles++;
-                // 把这张牌放到牌堆顶
-                top[left] = poker;
+        /*
+        解题思路：贪心算法 + 二分算法
+        原动态规划解法状态定义：dp[i] 的值代表 nums 以 nums[i] 结尾的最长子序列长度。
+        新的状态定义：tail[i]，长度为 i + 1 的 所有上升子序列的结尾的最小值。
+            举例：对于nums = [10,9,2,5,3,7,101,18]，tail = {2, 3, 7, 18}。
+            数组tail是一个严格的递增数组，证明：反证法
+                对于i < j,如果有 tail[i] >= tail[j]
+                对于tail[i] 而言，对应一个上升子序列 [a0, a1, ..., ai], tail[i] = ai
+                对于tail[j] 而言，对应一个上升子序列 [b0, b1, ..bi..., bj], tail[j] = bj
+                tail[i] >= tail[j], 即ai >= bj。在上升子序列[b0, b1, ..bi..., bj]中，bi 肯定小于 bj
+                所以 ai >= bj > bi, 那么 [b0, b1, ..bi] 就是长度为 i + 1 的结尾更小的上升子序列，即 tail[i] = bi。
+                上述 tail[i] >= tail[j] 与推导的 tail[i] = bi相矛盾，所以数组tail是一个严格的递增数组。
+        所以，遍历数组，维护tail的定义，最终tail的长度就是最长上升子序列的长度。
+        解题步骤：即如何在遍历数组的过程中维护tail
+            遍历数组 nums
+                num > 有序数组 tail 的最后一个元素：
+                    把 num 放在有序数组 tail 的后面，对于整个串来说，最长子序列的长度增加了。
+                小于等于：
+                    在 tail 中查找第 1 个 >= num 的那个数
+                        如果 tail 中存在等于 num 的数，那就继续下一次循环，因为 num 已经是某个长度的上升子序列的最小值了
+                        如果 tail 中存在大于 num 的数，找到第一个，更新tail，把该数更新为 num，这样我们就找到了一个结尾更小的相同长度的上升子序列。
+                    使用二分算法优化查找效率
+         */
+        public int lengthOfLIS(int[] nums) {
+            int length = nums.length;
+            if (length <= 1) {
+                return length;
             }
-            // 牌堆数就是 LIS 长度
-            return piles;
+
+            int[] tail = new int[length];
+            tail[0] = nums[0];
+            // end 表示有序数组 tail 的最后一个已经赋值元素的索引
+            int end = 0;
+
+            for (int i = 1; i < length; i++) {
+                if (nums[i] > tail[end]) {
+                    end++;
+                    tail[end] = nums[i];
+                } else {
+                    // 使用二分查找法，在有序数组 tail 中找到第 1 个大于等于 nums[i] 的元素
+                    int left = 0;
+                    int right = end;
+                    while (left < right) {
+                        int mid = left + (right - left) / 2;
+                        if (tail[mid] < nums[i]) {
+                            left = mid + 1;
+                        } else {
+                            right = mid;
+                        }
+                    }
+                    // 最开始已经判断过 nums[i] > tail[end]，所以数组中一定存在大于等于 nums[i] 的元素
+                    tail[left] = nums[i];
+                }
+            }
+            return end + 1;
         }
     }
-//leetcode submit region end(Prohibit modification and deletion)
+    //leetcode submit region end(Prohibit modification and deletion)
 
 }
