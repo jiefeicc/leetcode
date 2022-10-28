@@ -46,7 +46,7 @@ class TrappingRainWater{
         单调栈解法
         用非递增栈存储数组索引，入栈递减或者相等
          */
-        public int trap(int[] height) {
+        public int _trap(int[] height) {
             int len = height.length;
             if (len == 0) {
                 return 0;
@@ -75,7 +75,50 @@ class TrappingRainWater{
             }
             return res;
         }
+
+        /*
+        解题思路：动态规划
+            遍历思路分析：
+                按照列来遍历，对于当前列 height[i]，找到该列左边最高的列和右边最高的列，找到后判断该列能存多少水。
+                只有左右最高的列都 大于当前列，才能存住水，water = Math.min(lMax, rMax) - height[i]
+            动态规划优化：
+                找左右最高的列，可以提前用 dp 来求解，用两个数组保存好。
+                lMax[i] : i 列左边最高的列，不包含当前列。
+                rMax[i] : i 列右边最高的列，不包含当前列。
+         */
+        public int trap(int[] height) {
+            int waterSum = 0;
+            int length = height.length;
+            int[] lMax = new int[length];
+            int[] rMax = new int[length];
+            for (int i = 1; i < length; i++) {
+                lMax[i] = Math.max(lMax[i - 1], height[i - 1]);
+            }
+
+            for (int i = length - 2; i >= 0; i--) {
+                rMax[i] = Math.max(rMax[i + 1], height[i + 1]);
+            }
+
+            for (int i = 1; i < length; i++) {
+                int tempMin = Math.min(lMax[i], rMax[i]);
+                if (tempMin > height[i]) {
+                    waterSum += tempMin - height[i];
+                }
+            }
+            return waterSum;
+        }
+
+
+        /*
+        解题思路：动态规划 -> dp 空间优化
+            在 dp 解法的基础上
+            对于 lMax[i]，发现在遍历过程中每个只用一次，所以这个数组空间可以优化掉
+            rMax[i] 也可以优化掉
+         */
+        public int __trap(int[] height) {
+            return 0;
+        }
     }
-//leetcode submit region end(Prohibit modification and deletion)
+    //leetcode submit region end(Prohibit modification and deletion)
 
 }
